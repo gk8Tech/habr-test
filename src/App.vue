@@ -1,12 +1,12 @@
 <template>
   <div>
-    <input-tag :suggest-list="state.suggestList" @fetchData="fetchData" />
+    <Suggest :suggest-list="state.suggestList" @update:fetch="fetchData" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive} from "vue";
-import inputTag from "@/components/input-with-suggest/input-tag.vue";
+import { reactive } from "vue";
+import Suggest from "@/components/suggest/suggest.vue";
 import type { ISuggest, IResponseSuggestList } from "@/types/input-with-suggest.ts";
 
 interface IState {
@@ -19,7 +19,7 @@ const state = reactive<IState>({
   error: '',
 })
 
-async function getUsers<T>(query: string): Promise<T | null> {
+async function getUsers(query: string): Promise<IResponseSuggestList | null> {
   const params = new URLSearchParams();
   if (query) params.append("q", query);
 
@@ -40,8 +40,8 @@ async function getUsers<T>(query: string): Promise<T | null> {
   }
 }
 
-async function fetchData(search: string) {
-  const response = await getUsers<IResponseSuggestList>(search);
+async function fetchData(str: string) {
+  const response = await getUsers(str);
 
   if (response?.data) {
     state.suggestList = [...response.data];

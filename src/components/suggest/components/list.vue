@@ -1,68 +1,72 @@
 <template>
   <transition name="fade" appear>
-    <div v-show="props.filteredSuggestList?.length && !selectedSuggest.length" class="suggest">
-      <div
-          class="suggest__item"
-          v-for="suggest in props.filteredSuggestList"
+    <ul v-show="props.suggestList?.length && !props.selectedSuggest" class="list">
+      <li
+          class="list__item"
+          v-for="suggest in props.suggestList"
           :key="suggest.alias"
           @click="selectSuggest(suggest)">
-        <div class="suggest__img-container">
+        <div class="list__img-container">
           <img
-              class="suggest__img"
+              class="list__img"
               :src="suggest.avatar || placeholderImg"
               alt=""
           />
         </div>
-        <div class="suggest__text-container">
+        <div class="list__text-container">
           <div>{{ suggest.name || suggest.alias }}</div>
-          <div class="suggest__text">
-            @{{ suggest.alias }} {{ suggest.type === SuggestType.Company ? 'компания' : '' }}
+          <div class="list__text">
+            @{{ suggest.alias }} {{ suggest.type === SuggestEnum.Company ? 'компания' : '' }}
           </div>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </transition>
 </template>
 <script setup lang="ts">
 import placeholderImg from "@/assets/vite.svg";
-import { SuggestType } from "@/types/input-with-suggest.ts";
+import { SuggestEnum } from "@/types/input-with-suggest.ts";
 import type { ISuggest } from "@/types/input-with-suggest.ts";
 
 interface IProps {
-  filteredSuggestList: ISuggest[],
-  selectedSuggest: ISuggest[],
+  suggestList: ISuggest[],
+  selectedSuggest: ISuggest | null,
 }
 
 interface IEmit {
-  'click': [suggest: ISuggest]
+  "update:selectedSuggest": [value: ISuggest | null];
 }
 
 const emit = defineEmits<IEmit>()
 
 const props = withDefaults(defineProps<IProps>(),{
-  filteredSuggestList: () => [],
+  suggestList: () => [],
 })
 
 function selectSuggest(suggest: ISuggest) {
-  emit("click", suggest)
+  emit("update:selectedSuggest", suggest)
 }
 </script>
-<style lang="scss" scoped>
-@import "@/styles/_variables.scss";
+<style lang="scss">
+@use "@/styles/variables" as *;
 
-.suggest {
+.list {
   background-color: $background-color;
   max-height: 230px;
   border-radius: 12px;
   max-width: 400px;
   box-shadow: 0 4px 10px $shadow-color;
   overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-  &__item {
+    &__item {
     display: flex;
     align-items: center;
     padding: 4px 12px;
     cursor: pointer;
+    margin: 0;
 
     &:hover {
       background-color: $hover-color;

@@ -7,7 +7,7 @@ Vue 3 + Vite + TypeScript Input Suggest Component
 1. Клонирование репозитория
 
 git clone https://github.com/gk8Tech/habr-test
-cd my-vue3-app
+cd habr-test
 
 2. Установка зависимостей
 
