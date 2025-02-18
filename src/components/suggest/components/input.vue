@@ -16,7 +16,9 @@
 </template>
 <script setup lang="ts">
 import { reactive, watch, computed } from "vue";
-import type { ISuggest } from "@/types/input-with-suggest.ts";
+import { debounce } from "@/utils/helpers.ts";
+import type { ISuggest } from "@/types/suggest.ts";
+
 
 interface IProps {
   label: string,
@@ -24,8 +26,8 @@ interface IProps {
 }
 
 interface IEmit {
-  "update:modelValue": [value: string];
-  "clear:selectedSuggest": [value: null];
+  "update:model-value": [value: string];
+  "clear:selected-suggest": [value: null];
 }
 
 interface IState {
@@ -44,19 +46,11 @@ const emit = defineEmits<IEmit>();
 
 function clear() {
   state.value = '';
-  emit("clear:selectedSuggest", null);
-}
-
-function debounce<T extends (...args: any[]) => void>(fn: T, delay = 300) {
-  let timeout: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
+  emit("clear:selected-suggest", null);
 }
 
 const updateValue = debounce((newValue: string) => {
-  emit("update:modelValue", newValue);
+  emit("update:model-value", newValue);
 }, 300);
 
 
@@ -67,8 +61,6 @@ watch(() => state.value, (newValue) => {
 });
 </script>
 <style lang="scss">
-@use "@/styles/variables" as *;
-
 .input {
   display: flex;
   flex-direction: column;

@@ -1,6 +1,6 @@
 <template>
   <transition name="fade" appear>
-    <ul v-show="props.suggestList?.length && !props.selectedSuggest" class="list">
+    <ul v-show="isListVisible" class="list">
       <li
           class="list__item"
           v-for="suggest in props.suggestList"
@@ -24,9 +24,10 @@
   </transition>
 </template>
 <script setup lang="ts">
+import { computed } from "vue"
 import placeholderImg from "@/assets/vite.svg";
-import { SuggestEnum } from "@/types/input-with-suggest.ts";
-import type { ISuggest } from "@/types/input-with-suggest.ts";
+import { SuggestEnum } from "@/types/suggest.ts";
+import type { ISuggest } from "@/types/suggest.ts";
 
 interface IProps {
   suggestList: ISuggest[],
@@ -34,7 +35,7 @@ interface IProps {
 }
 
 interface IEmit {
-  "update:selectedSuggest": [value: ISuggest | null];
+  "update:selected-suggest": [value: ISuggest | null];
 }
 
 const emit = defineEmits<IEmit>()
@@ -44,12 +45,12 @@ const props = withDefaults(defineProps<IProps>(),{
 })
 
 function selectSuggest(suggest: ISuggest) {
-  emit("update:selectedSuggest", suggest)
+  emit("update:selected-suggest", suggest)
 }
+
+const isListVisible = computed(() => props.suggestList.length > 0 && !props.selectedSuggest);
 </script>
 <style lang="scss">
-@use "@/styles/variables" as *;
-
 .list {
   background-color: $background-color;
   max-height: 230px;

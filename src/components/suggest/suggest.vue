@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import Input from "@/components/suggest/components/input.vue";
 import List from "@/components/suggest/components/list.vue";
-import type { ISuggest } from "@/types/input-with-suggest.ts";
+import type { ISuggest } from "@/types/suggest.ts";
 import { reactive } from "vue";
 
 interface IProps {
@@ -31,7 +31,7 @@ interface IEmit {
   "update:fetch": [inputValue: string]
 }
 
-const state = reactive({
+const state = reactive<IState>({
   selectedSuggest: null,
 })
 const emit = defineEmits<IEmit>()
@@ -41,6 +41,7 @@ function updateList(inputValue: string) {
   emit("update:fetch", inputValue); // Пробрасываем выше
 }
 function updateSelectedSuggest(suggest: ISuggest) {
+  emit("update:fetch", "");
   state.selectedSuggest = suggest;
 }
 function clearSelectedSuggest() {
